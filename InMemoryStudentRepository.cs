@@ -2,6 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/* =============================================================
+ * GHI CHÚ REPOSITORY
+ * InMemoryStudentRepository: Lưu trữ dữ liệu sinh viên trong bộ nhớ RAM.
+ * Dùng List<SinhVien>. Không thread-safe (đủ cho WinForms đơn luồng).
+ * Kiểm tra trùng mã khi thêm, cập nhật dựa trên MaSo.
+ * ============================================================= */
+
 namespace QuanLyDiemSinhVien
 {
     /// <summary>
@@ -10,7 +17,7 @@ namespace QuanLyDiemSinhVien
     /// </summary>
     public class InMemoryStudentRepository : IStudentRepository
     {
-        private readonly List<SinhVien> _data = new List<SinhVien>();
+        private readonly List<SinhVien> _data = new List<SinhVien>(); // danh sách dữ liệu nội bộ
 
         public IReadOnlyCollection<SinhVien> GetAll() { return _data.AsReadOnly(); }
 

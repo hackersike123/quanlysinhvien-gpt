@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
+/* =============================================================
+ * GHI CHÚ REPOSITORY INTERFACE
+ * IStudentRepository: định nghĩa các thao tác CRUD cơ bản trên thực thể SinhVien.
+ * Cho phép thay thế triển khai (InMemory / Database / File ...).
+ * ============================================================= */
+
 namespace QuanLyDiemSinhVien
 {
     /// <summary>
@@ -11,10 +17,10 @@ namespace QuanLyDiemSinhVien
     /// </summary>
     public interface IStudentRepository
     {
-        IReadOnlyCollection<SinhVien> GetAll();
-        SinhVien GetByCode(string maSo); // trả về null theo kiểu truyền thống nếu không tìm thấy (dùng pattern try)
-        void Add(SinhVien sv);
-        void Update(SinhVien sv);
-        bool Remove(string maSo);
+        IReadOnlyCollection<SinhVien> GetAll(); // Lấy toàn bộ sinh viên (readonly)
+        SinhVien GetByCode(string maSo);        // Trả null nếu không tìm thấy
+        void Add(SinhVien sv);                  // Thêm mới
+        void Update(SinhVien sv);               // Cập nhật theo MaSo
+        bool Remove(string maSo);               // Xóa, trả về true nếu thành công
     }
 }

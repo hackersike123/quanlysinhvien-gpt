@@ -4,6 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/* =============================================================
+ * GHI CHÚ MODEL
+ * Lớp SinhVien: biểu diễn thực thể Sinh viên trong hệ thống.
+ * Thuộc tính: HoTen, MaSo, Khoa, Diem.
+ * Có thêm các hàm tĩnh tìm kiếm theo Mã số và Khoa (giữ tương thích cũ).
+ * ============================================================= */
+
 namespace QuanLyDiemSinhVien
 {
     // Lớp SinhVien đại diện cho một sinh viên. Public để các tầng khác (Service/Repository/UI) truy cập được.

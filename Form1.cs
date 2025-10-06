@@ -9,13 +9,26 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
 
+/* =============================================================
+ * GHI CHÚ THAY ĐỔI (phiên bản cải tiến)
+ * - Thêm nút btnClear để xóa nhanh dữ liệu nhập và thoát chế độ sửa.
+ * - Sau khi nhấn Sửa (Update) sẽ tự động Clear form để tránh người dùng nhầm tiếp tục sửa.
+ * - Gắn sự kiện btnThoat để đóng form (trước đây chưa có handler).
+ * - Thêm hàm EnsureKhoaInCombo để tự động bổ sung khoa mới vào ComboBox nếu người dùng nhập khoa chưa có.
+ * - Gọi RefreshGrid() khi khởi tạo runtime để hiển thị dữ liệu (nếu có) ngay lập tức.
+ * - Thêm xử lý try/catch cho Xóa để đồng nhất cách báo lỗi.
+ * - Thêm chú thích tiếng Việt mô tả các thay đổi phục vụ commit.
+ * ============================================================= */
+
 namespace QuanLyDiemSinhVien
 {
     public partial class frmMain : Form
     {
-        // BỎ các field trùng với Designer: btnSua, btnXoa, btnThongKe, txtSearch, lblSearch
+        // Dịch vụ quản lý sinh viên (được khởi tạo runtime)  
         private StudentService _studentService; 
+        // Mã số hiện được chọn trong lưới để sửa / xóa
         private string _currentSelectedMaSo = null;
+        // Cờ đánh dấu đang ở chế độ sửa (Edit Mode) để chặn thêm mới
         private bool _isEditMode = false;
 
         public frmMain()
@@ -33,6 +46,8 @@ namespace QuanLyDiemSinhVien
             dgvSinhVien.CellClick += dgvSinhVien_CellClick;
             dgvSinhVien.CellDoubleClick += (s, e) => LoadSelectedRowToForm();
             txtSearch.TextChanged += (s, e) => ApplyFilter();
+            btnThoat.Click += (s, e) => Close(); // handler Thoát
+            RefreshGrid(); // Hiển thị dữ liệu ngay khi mở form
         }
 
         private bool IsDesignMode()
@@ -58,6 +73,7 @@ namespace QuanLyDiemSinhVien
                 var khoa = !string.IsNullOrWhiteSpace(cboKhoa.Text) ? cboKhoa.Text.Trim() : txtKhoa.Text.Trim();
                 var diemText = txtDiemTB.Text.Trim();
                 _studentService.Add(maSo, hoTen, khoa, diemText);
+                EnsureKhoaInCombo(khoa);
                 MessageBox.Show("Thêm sinh viên thành công!");
                 ClearInputFields();
                 RefreshGrid();
@@ -81,7 +97,9 @@ namespace QuanLyDiemSinhVien
                 var khoa = !string.IsNullOrWhiteSpace(cboKhoa.Text) ? cboKhoa.Text.Trim() : txtKhoa.Text.Trim();
                 var diemText = txtDiemTB.Text.Trim();
                 _studentService.Update(maSo, hoTen, khoa, diemText);
+                EnsureKhoaInCombo(khoa);
                 MessageBox.Show("Cập nhật thành công");
+                ClearInputFields(); // Thoát chế độ sửa sau khi lưu
                 RefreshGrid();
             }
             catch (Exception ex)
@@ -95,13 +113,20 @@ namespace QuanLyDiemSinhVien
             if (IsDesignMode()) return;
             if (string.IsNullOrEmpty(_currentSelectedMaSo)) { MessageBox.Show("Chưa chọn sinh viên để xóa"); return; }
             if (DialogResult.Yes != MessageBox.Show("Bạn chắc chắn muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question)) return;
-            EnsureService();
-            if (_studentService.Delete(_currentSelectedMaSo))
+            try
             {
-                MessageBox.Show("Đã xóa");
-                ClearInputFields();
-                _currentSelectedMaSo = null;
-                RefreshGrid();
+                EnsureService();
+                if (_studentService.Delete(_currentSelectedMaSo))
+                {
+                    MessageBox.Show("Đã xóa");
+                    ClearInputFields();
+                    _currentSelectedMaSo = null;
+                    RefreshGrid();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -115,6 +140,11 @@ namespace QuanLyDiemSinhVien
             var byKhoa = all.GroupBy(s => s.Khoa).Select(g => string.Format("{0}: TB={1:0.00}, SL={2}", g.Key, g.Average(s => s.Diem), g.Count()));
             string msg = "Điểm TB chung: " + tbChung.ToString("0.00") + "\n" + string.Join("\n", byKhoa);
             MessageBox.Show(msg, "Thống kê");
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            ClearInputFields();
         }
 
         private void RefreshGrid() { ApplyFilter(); }
@@ -194,6 +224,17 @@ namespace QuanLyDiemSinhVien
         {
             txtMaSo.Clear(); txtHoTen.Clear(); txtKhoa.Clear(); txtDiemTB.Clear(); cboKhoa.SelectedIndex = -1;
             _currentSelectedMaSo = null; _isEditMode = false; txtMaSo.Enabled = true; txtMaSo.Focus();
+        }
+
+        private void EnsureKhoaInCombo(string khoa)
+        {
+            if (string.IsNullOrWhiteSpace(khoa)) return;
+            bool exists = false;
+            foreach (var item in cboKhoa.Items)
+            {
+                if (string.Equals(item.ToString(), khoa, StringComparison.OrdinalIgnoreCase)) { exists = true; break; }
+            }
+            if (!exists) cboKhoa.Items.Add(khoa);
         }
 
         private void EnsureService()

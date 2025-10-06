@@ -4,6 +4,15 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+/* =============================================================
+ * GHI CHÚ SERVICE
+ * StudentService chịu trách nhiệm:
+ *  - Validate đầu vào (mã số, họ tên, khoa, điểm)
+ *  - Thêm / Cập nhật / Xóa / Lọc / Tìm kiếm
+ *  - Chuẩn hóa tên (TitleCase)
+ * Regex mã số: chỉ chữ hoặc số, tối đa 12 ký tự.
+ * ============================================================= */
+
 namespace QuanLyDiemSinhVien
 {
     /// <summary>
@@ -12,12 +21,12 @@ namespace QuanLyDiemSinhVien
     /// </summary>
     public class StudentService
     {
-        private readonly IStudentRepository _repo;
+        private readonly IStudentRepository _repo; // Repository phụ thuộc (DI thủ công)
 
         // Regex / giới hạn đơn giản (có thể điều chỉnh sau)
-        private static readonly Regex MaSoRegex = new Regex("^[A-Za-z0-9]{1,12}$", RegexOptions.Compiled);          // 1-12 ký tự chữ hoặc số
-        private const int HoTenMaxLength = 100;  // tối đa 100 ký tự
-        private const int KhoaMaxLength  = 50;   // tối đa 50 ký tự
+        private static readonly Regex MaSoRegex = new Regex("^[A-Za-z0-9]{1,12}$", RegexOptions.Compiled); // Mã số chuẩn
+        private const int HoTenMaxLength = 100;  // Giới hạn chiều dài họ tên
+        private const int KhoaMaxLength  = 50;   // Giới hạn chiều dài khoa
 
         public StudentService(IStudentRepository repo)
         {
@@ -99,7 +108,7 @@ namespace QuanLyDiemSinhVien
 
         private static string NormalizeName(string name)
         {
-            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower()); // Chuẩn hóa Title Case
         }
     }
 }

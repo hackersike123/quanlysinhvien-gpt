@@ -2,6 +2,13 @@
 {
     partial class frmMain
     {
+        /* =============================================================
+         * CHÚ THÍCH THIẾT KẾ FORM (cập nhật)
+         * - Bổ sung nút btnClear giữa Thoát và Sửa để người dùng xóa nhanh dữ liệu.
+         * - Điều chỉnh TabIndex một số control liên quan để phù hợp thêm nút mới.
+         * - Các thay đổi khác nằm ở file code-behind Form1.cs (handler, logic clear / refresh).
+         * ============================================================= */
+
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -52,6 +59,7 @@
             this.btnSua = new System.Windows.Forms.Button();
             this.btnXoa = new System.Windows.Forms.Button();
             this.btnThongKe = new System.Windows.Forms.Button();
+            this.btnClear = new System.Windows.Forms.Button(); // init nút Clear
             ((System.ComponentModel.ISupportInitialize)(this.dgvSinhVien)).BeginInit();
             this.SuspendLayout();
             // 
@@ -261,7 +269,7 @@
             this.txtSearch.Location = new System.Drawing.Point(220, 512);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(230, 30);
-            this.txtSearch.TabIndex = 6;
+            this.txtSearch.TabIndex = 7;
             // 
             // btnSua
             // 
@@ -269,7 +277,7 @@
             this.btnSua.Location = new System.Drawing.Point(470, 443);
             this.btnSua.Name = "btnSua";
             this.btnSua.Size = new System.Drawing.Size(90, 50);
-            this.btnSua.TabIndex = 7;
+            this.btnSua.TabIndex = 8;
             this.btnSua.Text = "Sửa";
             this.btnSua.UseVisualStyleBackColor = true;
             this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
@@ -280,7 +288,7 @@
             this.btnXoa.Location = new System.Drawing.Point(566, 443);
             this.btnXoa.Name = "btnXoa";
             this.btnXoa.Size = new System.Drawing.Size(90, 50);
-            this.btnXoa.TabIndex = 8;
+            this.btnXoa.TabIndex = 9;
             this.btnXoa.Text = "Xóa";
             this.btnXoa.UseVisualStyleBackColor = true;
             this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
@@ -291,16 +299,28 @@
             this.btnThongKe.Location = new System.Drawing.Point(662, 443);
             this.btnThongKe.Name = "btnThongKe";
             this.btnThongKe.Size = new System.Drawing.Size(112, 50);
-            this.btnThongKe.TabIndex = 9;
+            this.btnThongKe.TabIndex = 10;
             this.btnThongKe.Text = "Thống kê";
             this.btnThongKe.UseVisualStyleBackColor = true;
             this.btnThongKe.Click += new System.EventHandler(this.btnThongKe_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.btnClear.Location = new System.Drawing.Point(305, 443);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(120, 50);
+            this.btnClear.TabIndex = 6;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 26F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1524, 564);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnThongKe);
             this.Controls.Add(this.btnXoa);
             this.Controls.Add(this.btnSua);
@@ -356,6 +376,7 @@
         private System.Windows.Forms.Button btnSua;
         private System.Windows.Forms.Button btnXoa;
         private System.Windows.Forms.Button btnThongKe;
+        private System.Windows.Forms.Button btnClear; // nút mới để xóa form
     }
 }
 
